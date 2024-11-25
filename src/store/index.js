@@ -26,6 +26,12 @@ const storeData = {
       },
     },
   },
+  getters: {
+    firstForm: (state) => state.info.firstForm,
+    companyList: (state) => state.info.companyList,
+    thirdForm: (state) => state.info.thirdForm,
+    info: (state) => state.info,
+  },
 }
 
 const store = new Vuex.Store(storeData)
