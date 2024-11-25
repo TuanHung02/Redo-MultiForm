@@ -1,21 +1,57 @@
 <template>
     <div id="first-layout">
-        <form id="first-form" method="get" @submit.prevent>
-            <InputText label="Họ và tên" name="full-name" type="text" :isRequired="true">
+        <form id="first-form" method="get" @change="checkButton" @submit.prevent>
+            <InputText v-model="firstForm.fullName" type="text" name="hovaten" label="Họ và tên"
+                placeholder="Nhập tên của bạn" :maxLength="100" :isRequired="true" />
+            <InputText label="Ngày sinh" name="date-picker" type="date" :isRequired="true" v-model="firstForm.date">
             </InputText>
-
-            <InputText label="Ngày sinh" name="date-picker" type="date" :isRequired="true"></InputText>
-
-            <InputArea label="Mô tả về bản thân" :maxLength="1000"></InputArea>
-
+            <SelectOptions :list="listCities" label="Thành Phố" v-model="firstForm.city"></SelectOptions>
+            <InputArea label="Mô tả về bản thân" v-model="firstForm.description" :maxLength="1000"></InputArea>
+            <p style="margin: 3px !important;">
+                {{ firstForm.description.length }}/1000
+            </p>
 
         </form>
     </div>
 </template>
 
 <script setup>
+import { reactive, ref } from "vue";
 import InputText from "./InputText.vue";
 import InputArea from "./InputArea.vue";
+import SelectOptions from "./SelectOptions.vue";
+import { citiesData } from "@/data";
+
+const firstForm = reactive({
+    fullName: "",
+    date: "",
+    city: "",
+    description: "",
+});
+
+const listCities = ref(citiesData);
+
+
+
+const checkStatus = reactive({
+    isEmpty: false,
+    isOver: false,
+    isOverArea: false,
+    isDate: false,
+});
+
+
+const checkButton = () => {
+    if (
+        checkStatus.isOver ||
+        checkStatus.isEmpty ||
+        checkStatus.isOverArea ||
+        checkStatus.isDate
+    ) {
+        // 
+    }
+};
+
 
 
 </script>
@@ -46,5 +82,6 @@ p.active {
 
 .warning {
     color: red;
+    margin: 0 !important;
 }
 </style>

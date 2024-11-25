@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+#app {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+/* input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+}
+input[type="date"]::-webkit-clear-button {
+    display: none;
+} */
+label,
+span {
+  all: unset; /* Đặt tất cả các thuộc tính CSS về giá trị mặc định */
+  display: inline; /* Nếu bạn muốn chúng vẫn hiển thị dưới dạng inline */
+}

@@ -1,32 +1,81 @@
 <template>
     <div id="text-area">
         <label>
-            <span v-if="isRequired">Must</span>{{ props.label }}
+            <span v-show="isRequired">Must</span>{{ label }}
         </label>
-        <textarea id="area" v-model="inputValue" :maxlength="props.maxLength" @change="handleChangeInput"></textarea>
+        <textarea :id="id" :placeholder="placeholder" v-model="localValue" @input="handleInput" @blur="validateInput"
+            rows="4" :maxlength="maxLength" :class="{ 'warning': error }"></textarea>
+        <p v-if="error" class="error-message">
+            {{ error }}
+        </p>
     </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from "vue";
+import { ref, watch, defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
-    label: String,
-    valueInput: String,
-    isRequired: Boolean,
-    maxLength: String,
+    modelValue: {
+        type: String,
+        required: true,
+    },
+    label: {
+        type: String,
+    },
+    placeholder: {
+        type: String,
+        default: 'Nhập vào đây...',
+    },
+    id: {
+        type: String,
+        default: () => `textarea-${Math.random().toString(36).substr(2, 9)}`,
+    },
+    maxLength: {
+        type: Number,
+        default: 1000,
+    },
+    isRequired: {
+        type: Boolean,
+        default: false
+    }
 });
 
-const emits = defineEmits(["update:valueInput", "handleChangeInput"]);
+const emit = defineEmits(['update:modelValue']);
 
-const inputValue = computed({
-    get: () => props.valueInput,
-    set: (value) => emits("update:valueInput", value),
-});
+const localValue = ref('');
 
-const handleChangeInput = () => {
-    emits("handleChangeInput");
+watch(
+    () => localValue.value,
+    (newValue) => {
+        emit('update:modelValue', newValue);
+    },
+    { immediate: true }
+);
+
+const error = ref('');
+
+const handleInput = () => {
+    if (localValue.value.length > props.maxLength) {
+        localValue.value = localValue.value.slice(0, props.maxLength);
+    }
 };
+
+const validateInput = () => {
+    if (props.isRequired) {
+        if (!localValue.value.trim()) {
+            error.value = 'Trường này không được để trống.';
+        } else if (localValue.value.length > props.maxLength) {
+            error.value = `Độ dài tối đa là ${props.maxLength} ký tự.`;
+        } else {
+            error.value = '';
+        }
+    } else {
+        // Nếu không cần validate, xóa lỗi (nếu có)
+        error.value = '';
+    }
+};
+
+
 </script>
 
 <style scoped>
@@ -42,11 +91,11 @@ const handleChangeInput = () => {
     height: 152px;
     overflow: hidden;
     border: 1px solid #dbdbdb;
+    border-radius: 4px;
 }
 
 #text-area textarea:focus {
     outline: none;
-    border: 1px solid orange;
 }
 
 span {
@@ -63,7 +112,13 @@ label {
     margin-bottom: 6px;
 }
 
-.active textarea {
+.error-message {
+    color: red;
+    margin: 3px !important;
+    font-size: 12px;
+}
+
+.warning {
     border-color: red !important;
 }
 </style>

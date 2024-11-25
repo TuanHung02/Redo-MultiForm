@@ -1,51 +1,99 @@
 <template>
     <div class="input-item">
         <label :for="name">
-            <span v-show="props.isRequired">Must</span>{{ props.label }}
+            <span v-show="isRequired">Must</span>{{ label }}
         </label>
         <div class="input-zone">
-            <input :type="props.type" :id="props.name" :placeholder="props.placeholder" :value="props.valueInput" @input="onInputValue"
-                @change="handleChangeInput" :maxlength="props.maxLength" :style="props.styleBox" :class="props.classBox" />
+            <input :id="id" :type="type" :name="name" :placeholder="placeholder" v-model="localValue"
+                @blur="validateInput" @input="handleInput" :class="{ 'warning': error }" />
             <slot></slot>
         </div>
+        <p v-if="error" class="error-message">
+            {{ error }}
+        </p>
+
     </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { ref, watch, defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
-    label: String,
-    placeholder: String,
-    classBox: String,    
-    type: String,
-    name: String,
-    valueInput: String,
-    maxLength: String,
-    styleBox: String,   
+    modelValue: {
+        type: String,
+        required: true,
+    },
+    label: {
+        type: String,
+    },
+    placeholder: {
+        type: String,
+        default: 'Nhập vào đây...',
+    },
+    id: {
+        type: String,
+        default: () => `input-${Math.random().toString(36).substr(2, 9)}`,
+    },
     isRequired: {
         type: Boolean,
-        default: false,
+        default: false
     },
+    maxLength: {
+        type: Number,
+        default: 100,
+    },
+    name: {
+        type: String,
+        default: 'text',
+    },
+    type: {
+        type: String,
+        default: 'text',
+    }
 });
 
-const emit = defineEmits(['update:valueInput', 'handleChangeInput']);
+const emit = defineEmits(['update:modelValue']);
 
-const onInputValue = (e) => {
-    const inputText = e.target.value;
-    emit('update:valueInput', inputText);
+const localValue = ref('');
+
+watch(
+    () => localValue.value,
+    (newValue) => {
+        emit('update:modelValue', newValue);
+    },
+    { immediate: true }
+);
+
+const error = ref('');
+
+const handleInput = () => {
+    if (localValue.value.length > props.maxLength) {
+        localValue.value = localValue.value.slice(0, props.maxLength); // Giới hạn độ dài
+    }
 };
 
-const handleChangeInput = () => {
-    emit('handleChangeInput');
+const validateInput = () => {
+    if (props.isRequired) {
+        if (!localValue.value.trim()) {
+            error.value = 'Trường này không được để trống.';
+        } else if (localValue.value.length > props.maxLength) {
+            error.value = `Độ dài tối đa là ${props.maxLength} ký tự.`;
+        } else {
+            error.value = '';
+        }
+    } else {
+        // Nếu không cần validate, xóa lỗi (nếu có)
+        error.value = '';
+    }
 };
+
 </script>
 
 <style scoped>
 .input-item {
     display: flex;
     flex-direction: column;
-    width: 528px;
+    width: 506px;
     text-align: start;
     margin-bottom: 10px;
 }
@@ -57,8 +105,8 @@ const handleChangeInput = () => {
 .input-item span {
     font-size: 12px;
     color: #fff;
-    padding: 5px 8px;
-    background-color: #627d98;
+    padding: 2px 8px;
+    background-color: rgba(98, 125, 152, 1);
     line-height: 20px;
     border-radius: 3px;
     margin-right: 8px;
@@ -87,23 +135,19 @@ const handleChangeInput = () => {
     position: relative;
 }
 
-.active input[type="date"] {
-    border-color: red !important;
-    color: red;
-}
-
-.active input {
-    border-color: red;
-    color: red;
-}
-
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-input[type="number"] {
-    -moz-appearance: textfield;
+.error-message {
+    color: red;
+    margin: 3px !important;
+    font-size: 12px;
+}
+
+.warning {
+    border-color: red !important;
 }
 </style>
