@@ -2,7 +2,7 @@ import Vuex from 'vuex'
 
 const storeData = {
   state: {
-    isDisable: false,
+    isDisable: true,
     info: {
       firstForm: {
         fullName: '',
@@ -27,10 +27,25 @@ const storeData = {
     },
   },
   getters: {
+    isDisable: (state) => state.isDisable,
     firstForm: (state) => state.info.firstForm,
     companyList: (state) => state.info.companyList,
     thirdForm: (state) => state.info.thirdForm,
     info: (state) => state.info,
+  },
+  mutations: {
+    setFirstForm(state, firstForm) {
+      state.info.firstForm = firstForm
+    },
+    setSecondForm(state, companyList) {
+      state.info.companyList = companyList
+    },
+    setThirdForm(state, thirdForm) {
+      state.info.thirdForm = thirdForm
+    },
+    setDisable(state, disable) {
+      state.isDisable = disable
+    },
   },
 }
 

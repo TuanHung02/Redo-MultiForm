@@ -1,8 +1,7 @@
 <template>
     <div id="second-form">
-        <form @change="checkButton" @submit.prevent>
-            <div class="form-group" v-for="item in companyList" :key="item.id"
-                :class="{ 'warning-box': checkExpCount }">
+        <form id="second-form" method="get" @change="handleChangeSubmit" @submit.prevent>
+            <div class="form-group" v-for="item in companyList" :key="item.id">
                 <div class="select-box">
                     <InputText v-model="item.company" type="text" name="company" placeholder="Nhập tên của bạn"
                         :maxLength="100" style="max-width: 780px;" />
@@ -24,6 +23,14 @@
                 </div>
                 <InputText v-model="item.position" type="text" name="position" label="Vị trí từng làm"
                     placeholder="Nhập vị trí từng làm" :maxLength="100" :isRequired="true" />
+                <div style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; width: 100px;">
+                    <InputText label="Ngày bắt đầu" name="date-picker" type="date" v-model="item.start_date"
+                        :isRequired="true">
+                    </InputText>
+                    <InputText label="Ngày kết thúc" name="date-picker" type="date" :isRequired="true"
+                        v-model="item.end_date">
+                    </InputText>
+                </div>
                 <InputArea label="Mô tả công việc" v-model="item.description" :maxLength="1000"></InputArea>
                 <p style="margin: 3px !important;">
                     {{ item.description.length }}/1000
@@ -37,9 +44,13 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, watch, ref } from 'vue';
 import InputText from "./InputText.vue";
 import InputArea from "./InputArea.vue";
+import { useStore } from "vuex";
+
+const store = useStore();
+const isDisable = ref(true);
 
 const companyList = reactive([
     {
@@ -52,7 +63,13 @@ const companyList = reactive([
     },
 ]);
 
-const checkExpCount = ref(false);
+watch(
+    () => store.state.info.companyList,
+    (newVal) => {
+        Object.assign(companyList, newVal);
+    },
+    { deep: true }
+);
 
 const handleAdd = () => {
     const uniqueKey = Math.random().toString(36).substring(2);
@@ -64,22 +81,28 @@ const handleAdd = () => {
         end_date: "",
         description: "",
     });
-    checkExpCount.value = false;
-    // Use Vuex to commit the new state
-    // this.$store.commit("SET_SECOND_FORM", companyList);
+    store.commit('setSecondForm', companyList);  // Commit dữ liệu vào store
+
 };
 
 const handleDelete = (id) => {
     const index = companyList.findIndex(item => item.id === id);
     if (companyList.length > 1) {
         companyList.splice(index, 1);
-        checkExpCount.value = false;
-    } else {
-        checkExpCount.value = true;
+        // Cập nhật store sau khi xóa phần tử
+        store.commit('setSecondForm', companyList);
     }
 };
+const handleChangeSubmit = () => {
+    if (companyList.some(item => !item.company || !item.position || !item.start_date || !item.end_date)) {
+        isDisable.value = true
+    } else {
+        isDisable.value = false
+    }
 
-
+    store.commit('setSecondForm', companyList);  // Commit dữ liệu vào store
+    store.commit('setDisable', isDisable);
+};
 </script>
 
 <style scoped>

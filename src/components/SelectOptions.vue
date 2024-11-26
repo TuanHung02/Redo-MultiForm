@@ -1,33 +1,37 @@
 <template>
     <div class="input-item">
-        <label for="select-option">{{ props.label }}</label>
-        <select id="select-option" name="select-option" :value="props.selectValue" @input="handleSelect"
-            @change="handleChangeSelect">
-            <option v-for="item in props.list" :key="item.id" :value="item.name">
-                <span>{{ item.name }}</span>
+        <label for="select-option">{{ label }}</label>
+        <select id="select-option" name="select-option" v-model="localValue" @change="handleChangeSelect">
+            <option v-for="item in list" :key="item.id" :value="item.name">
+                {{ item.name }}
             </option>
         </select>
     </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
-
-const props = defineProps({
+import { defineProps, defineEmits, ref, watch } from "vue";
+defineProps({
     list: Array,
     label: String,
-    selectValue: String,
+    modelValue: String, // Sử dụng modelValue thay vì selectValue
 });
 
-const emit = defineEmits(["update:selectValue", "onChangeSelect"]);
+const emit = defineEmits(["update:modelValue", "onChangeSelect"]);
 
-const handleSelect = (e) => {
-    emit("update:selectValue", e.target.value);
-};
+const localValue = ref('');
+watch(
+    () => localValue.value,
+    (newValue) => {
+        emit('update:modelValue', newValue);
+    },
+    { immediate: true }
+);
 
 const handleChangeSelect = () => {
     emit("onChangeSelect");
 };
+
 </script>
 
 <style scoped>

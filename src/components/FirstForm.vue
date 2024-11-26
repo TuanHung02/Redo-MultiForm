@@ -1,7 +1,7 @@
 <template>
     <div id="first-layout">
-        <form id="first-form" method="get" @change="checkButton" @submit.prevent>
-            <InputText v-model="firstForm.fullName" type="text" name="hovaten" label="Họ và tên"
+        <form id="first-form" method="get" @change="handleChangeSubmit" @submit.prevent>
+            <InputText v-model="firstForm.fullName" type="text" name="fullName" label="Họ và tên"
                 placeholder="Nhập tên của bạn" :maxLength="100" :isRequired="true" />
             <InputText label="Ngày sinh" name="date-picker" type="date" :isRequired="true" v-model="firstForm.date">
             </InputText>
@@ -10,17 +10,19 @@
             <p style="margin: 3px !important;">
                 {{ firstForm.description.length }}/1000
             </p>
-
         </form>
     </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import InputText from "./InputText.vue";
 import InputArea from "./InputArea.vue";
 import SelectOptions from "./SelectOptions.vue";
 import { citiesData } from "@/data";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const firstForm = reactive({
     fullName: "",
@@ -29,29 +31,28 @@ const firstForm = reactive({
     description: "",
 });
 
+const isDisable = ref(true);
+
 const listCities = ref(citiesData);
 
+watch(
+    () => store.state.info.firstForm,
+    (newVal) => {
+        Object.assign(firstForm, newVal);
+    },
+    { deep: true }
+);
 
 
-const checkStatus = reactive({
-    isEmpty: false,
-    isOver: false,
-    isOverArea: false,
-    isDate: false,
-});
-
-
-const checkButton = () => {
-    if (
-        checkStatus.isOver ||
-        checkStatus.isEmpty ||
-        checkStatus.isOverArea ||
-        checkStatus.isDate
-    ) {
-        // 
+const handleChangeSubmit = () => {
+    if (firstForm.fullName !== '' && firstForm.date !== '') {
+        isDisable.value = false
+    } else {
+        isDisable.value = true
     }
+    store.commit('setFirstForm', firstForm);
+    store.commit('setDisable', isDisable);
 };
-
 
 
 </script>

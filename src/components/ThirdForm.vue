@@ -1,6 +1,6 @@
 <template>
     <div id="first-layout">
-        <form id="first-form" method="get" @change="checkButton" @submit.prevent>
+        <form id="third-form" method="get" @change="handleChangeSubmit" @submit.prevent>
             <InputArea label="Lý do muốn ứng tuyển vào công ty" :isRequired="true" v-model="thirdForm.reason"
                 :maxLength="1000"></InputArea>
             <p style="margin: 3px !important;">
@@ -13,38 +13,37 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, watch, ref } from "vue";
 import InputText from "./InputText.vue";
 import InputArea from "./InputArea.vue";
+import { useStore } from "vuex";
+
+const store = useStore();
+const isDisable = ref(true);
 
 const thirdForm = reactive({
     reason: "",
     salary: "",
 });
 
+watch(
+    () => store.state.info.thirdForm,
+    (newVal) => {
+        Object.assign(thirdForm, newVal);
+    },
+    { deep: true }
+);
 
-
-
-const checkStatus = reactive({
-    isEmpty: false,
-    isOver: false,
-    isOverArea: false,
-    isDate: false,
-});
-
-
-const checkButton = () => {
-    if (
-        checkStatus.isOver ||
-        checkStatus.isEmpty ||
-        checkStatus.isOverArea ||
-        checkStatus.isDate
-    ) {
-        // 
+const handleChangeSubmit = () => {
+    if (thirdForm.reason !== '' && thirdForm.salary !== '') {
+        isDisable.value = false
+    } else {
+        isDisable.value = true
     }
+    store.commit('setThirdForm', thirdForm);  // Commit dữ liệu vào store
+    store.commit('setDisable', isDisable);
+
 };
-
-
 
 </script>
 
