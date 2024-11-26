@@ -20,6 +20,7 @@ defineProps({
 const emit = defineEmits(["update:modelValue", "onChangeSelect"]);
 
 const localValue = ref('');
+
 watch(
     () => localValue.value,
     (newValue) => {
@@ -53,9 +54,5 @@ const handleChangeSelect = () => {
 
 select::-webkit-scrollbar {
     display: none;
-}
-
-.input-item select:focus {
-    border: 1px solid orange;
 }
 </style>

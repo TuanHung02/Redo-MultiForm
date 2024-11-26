@@ -23,8 +23,9 @@ const info = computed(() => store.state.info);
 const isDone = ref(false)
 const currentStep = ref(1);
 const component = shallowRef(FirstForm);
+
 const step = [
-  { id: 1, name: "Thông tin người dùng", class: "first-step" },
+  { id: 1, name: "Thông tin cá nhân", class: "first-step" },
   { id: 2, name: "Kinh nghiệm làm việc", class: "second-step" },
   { id: 3, name: "Xác nhận thông tin", class: "third-step" }
 ];
@@ -42,14 +43,16 @@ const handleNext = () => {
     isDone.value = true
   };
 }
-// Hàm xử lý Back
+
 const handleBack = () => {
   if (component.value === ThirdForm) {
     component.value = SecondForm;
     currentStep.value = 2;
+    store.commit('setDisable', false);
   } else if (component.value === SecondForm) {
     component.value = FirstForm;
     currentStep.value = 1;
+    store.commit('setDisable', false);
   }
 };
 </script>
