@@ -32,7 +32,6 @@ const firstForm = reactive({
 });
 
 const isDisable = ref(true);
-
 const listCities = ref(citiesData);
 
 watch(
@@ -42,7 +41,6 @@ watch(
     },
     { deep: true }
 );
-
 
 const handleChangeSubmit = () => {
     if (firstForm.fullName !== '' && firstForm.date !== '') {

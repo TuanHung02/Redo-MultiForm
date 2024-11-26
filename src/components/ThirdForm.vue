@@ -20,6 +20,7 @@ import { useStore } from "vuex";
 
 const store = useStore();
 const isDisable = ref(true);
+store.commit('setDisable', isDisable);
 
 const thirdForm = reactive({
     reason: "",

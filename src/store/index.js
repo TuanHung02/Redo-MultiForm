@@ -31,7 +31,6 @@ const storeData = {
     firstForm: (state) => state.info.firstForm,
     companyList: (state) => state.info.companyList,
     thirdForm: (state) => state.info.thirdForm,
-    info: (state) => state.info,
   },
   mutations: {
     setFirstForm(state, firstForm) {

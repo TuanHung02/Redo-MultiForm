@@ -51,6 +51,7 @@ import { useStore } from "vuex";
 
 const store = useStore();
 const isDisable = ref(true);
+store.commit('setDisable', isDisable);
 
 const companyList = reactive([
     {
@@ -82,6 +83,7 @@ const handleAdd = () => {
         description: "",
     });
     store.commit('setSecondForm', companyList);  // Commit dữ liệu vào store
+    store.commit('setDisable', true);
 
 };
 
@@ -89,7 +91,6 @@ const handleDelete = (id) => {
     const index = companyList.findIndex(item => item.id === id);
     if (companyList.length > 1) {
         companyList.splice(index, 1);
-        // Cập nhật store sau khi xóa phần tử
         store.commit('setSecondForm', companyList);
     }
 };
@@ -99,7 +100,6 @@ const handleChangeSubmit = () => {
     } else {
         isDisable.value = false
     }
-
     store.commit('setSecondForm', companyList);  // Commit dữ liệu vào store
     store.commit('setDisable', isDisable);
 };

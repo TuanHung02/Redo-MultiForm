@@ -1,10 +1,11 @@
 <template>
   <div id="app">
-    <!-- <HeaderForm :currentStep="currentStep" :step="step" /> -->
+    <HeaderStep :currentStep="currentStep" :step="step" />
     <keep-alive>
       <component :is="component" />
     </keep-alive>
     <StepButton @handleNext="handleNext" @handleBack="handleBack" :currentStep="currentStep" />
+    <div v-if="isDone">{{ info }}</div>
   </div>
 </template>
 
@@ -15,18 +16,18 @@ import ThirdForm from './components/ThirdForm.vue';
 import SecondForm from './components/SecondForm.vue';
 import StepButton from './components/StepButton.vue';
 import { useStore } from 'vuex';
+import HeaderStep from './components/HeaderStep.vue';
 
 const store = useStore();
 const info = computed(() => store.state.info);
-
-const currentStep = ref(2);
-const component = shallowRef(SecondForm);
-// const step = [
-//   { id: 1, name: "Thông tin người dùng", class: "first-step" },
-//   { id: 2, name: "Kinh nghiệm làm việc", class: "second-step" },
-//   { id: 3, name: "Xác nhận thông tin", class: "third-step" }
-// ];
-// Hàm xử lý Next
+const isDone = ref(false)
+const currentStep = ref(1);
+const component = shallowRef(FirstForm);
+const step = [
+  { id: 1, name: "Thông tin người dùng", class: "first-step" },
+  { id: 2, name: "Kinh nghiệm làm việc", class: "second-step" },
+  { id: 3, name: "Xác nhận thông tin", class: "third-step" }
+];
 
 const handleNext = () => {
   if (component.value === FirstForm) {
@@ -36,7 +37,9 @@ const handleNext = () => {
     component.value = ThirdForm;
     currentStep.value = 3;
   } else if (component.value === ThirdForm) {
+    alert('Send data successfully!')
     console.log(info.value)
+    isDone.value = true
   };
 }
 // Hàm xử lý Back

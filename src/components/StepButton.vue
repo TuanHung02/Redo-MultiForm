@@ -57,4 +57,8 @@ const handleNext = () => {
 button:disabled {
     background: #dcdcdc !important;
 }
+
+button {
+    cursor: pointer;
+}
 </style>
