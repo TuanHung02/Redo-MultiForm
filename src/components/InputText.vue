@@ -170,5 +170,8 @@ input::-webkit-inner-spin-button {
     position: absolute;
     right: -15px;
     top: 18px;
+    z-index: 1000;
+    background-color: white;
+    padding-left: 10px;
 }
 </style>
