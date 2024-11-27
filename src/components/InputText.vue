@@ -5,7 +5,7 @@
         </label>
         <div class="input-zone">
             <input :id="id" :type="type" :name="name" :placeholder="placeholder" v-model="localValue"
-                @blur="validateInput" @input="handleInput" :class="{ 'warning': error }" />
+                @blur="validateInput" :class="{ 'warning': error }" />
             <slot></slot>
         </div>
         <p v-if="error" class="error-message">
@@ -49,7 +49,7 @@ const props = defineProps({
     type: {
         type: String,
         default: 'text',
-    }
+    },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -66,11 +66,6 @@ watch(
 
 const error = ref('');
 
-const handleInput = () => {
-    if (localValue.value.length > props.maxLength) {
-        localValue.value = localValue.value.slice(0, props.maxLength); // Giới hạn độ dài
-    }
-};
 
 const validateInput = () => {
     if (props.isRequired) {

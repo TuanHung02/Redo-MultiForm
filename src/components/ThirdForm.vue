@@ -6,7 +6,7 @@
             <p style="margin: 3px !important;">
                 {{ thirdForm.reason.length }}/1000
             </p>
-            <InputText v-model="thirdForm.salary" type="text" name="salary" label="Mức lương mong muốn"
+            <InputText v-model="thirdForm.salary" type="number" name="salary" label="Mức lương mong muốn"
                 placeholder="Nhập tên của bạn" :maxLength="100" :isRequired="true" />
         </form>
     </div>
@@ -36,12 +36,9 @@ watch(
 );
 
 const handleChangeSubmit = () => {
-    if (thirdForm.reason !== '' && thirdForm.salary !== '') {
-        isDisable.value = false
-    } else {
-        isDisable.value = true
-    }
-    store.commit('setThirdForm', thirdForm);  // Commit dữ liệu vào store
+    isDisable.value = !(thirdForm.reason && thirdForm.salary);
+
+    store.commit('setThirdForm', thirdForm);
     store.commit('setDisable', isDisable);
 
 };

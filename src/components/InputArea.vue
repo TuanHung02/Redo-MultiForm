@@ -3,8 +3,8 @@
         <label>
             <span v-show="isRequired">Must</span>{{ label }}
         </label>
-        <textarea :id="id" :placeholder="placeholder" v-model="localValue" @input="handleInput" @blur="validateInput"
-            rows="4" :maxlength="maxLength" :class="{ 'warning': error }"></textarea>
+        <textarea :id="id" :placeholder="placeholder" v-model="localValue" @blur="validateInput" rows="4"
+            :maxlength="maxLength" :class="{ 'warning': error }"></textarea>
         <p v-if="error" class="error-message">
             {{ error }}
         </p>
@@ -54,12 +54,6 @@ watch(
 
 const error = ref('');
 
-const handleInput = () => {
-    if (localValue.value.length > props.maxLength) {
-        localValue.value = localValue.value.slice(0, props.maxLength);
-    }
-};
-
 const validateInput = () => {
     if (props.isRequired) {
         if (!localValue.value.trim()) {
@@ -70,7 +64,6 @@ const validateInput = () => {
             error.value = '';
         }
     } else {
-        // Nếu không cần validate, xóa lỗi (nếu có)
         error.value = '';
     }
 };

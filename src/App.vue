@@ -21,8 +21,8 @@ import HeaderStep from './components/HeaderStep.vue';
 const store = useStore();
 const info = computed(() => store.state.info);
 const isDone = ref(false)
-const currentStep = ref(1);
-const component = shallowRef(FirstForm);
+const currentStep = ref(2);
+const component = shallowRef(SecondForm);
 
 const step = [
   { id: 1, name: "Thông tin cá nhân", class: "first-step" },

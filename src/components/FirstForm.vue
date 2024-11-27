@@ -43,11 +43,8 @@ watch(
 );
 
 const handleChangeSubmit = () => {
-    if (firstForm.fullName !== '' && firstForm.date !== '') {
-        isDisable.value = false
-    } else {
-        isDisable.value = true
-    }
+    isDisable.value = !(firstForm.fullName && firstForm.date);
+
     store.commit('setFirstForm', firstForm);
     store.commit('setDisable', isDisable);
 };

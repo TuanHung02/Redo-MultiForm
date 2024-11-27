@@ -19,6 +19,11 @@
                         v-model="item.end_date">
                     </InputText>
                 </div>
+                <p v-if="overlappingCompanies.includes(item.id)" class="warning">
+                    Khoảng thời gian này bị trùng với công ty khác.
+                </p>
+
+
                 <InputArea label="Mô tả công việc" v-model="item.description" :maxLength="1000"></InputArea>
                 <p style="margin: 3px !important;">
                     {{ item.description.length }}/1000
@@ -40,7 +45,7 @@ import TrashIcon from '@/assets/icons/TrashIcon.vue';
 const store = useStore();
 const isDisable = ref(true);
 store.commit('setDisable', isDisable);
-
+const overlappingCompanies = ref([]);
 const companyList = reactive([
     {
         id: 1,
@@ -70,7 +75,7 @@ const handleAdd = () => {
         end_date: "",
         description: "",
     });
-    store.commit('setSecondForm', companyList);  // Commit dữ liệu vào store
+    store.commit('setSecondForm', companyList);
     store.commit('setDisable', true);
 
 };
@@ -83,13 +88,28 @@ const handleDelete = (id) => {
         store.commit('setSecondForm', companyList);
     }
 };
+
+
 const handleChangeSubmit = () => {
-    if (companyList.some(item => !item.company || !item.position || !item.start_date || !item.end_date)) {
-        isDisable.value = true
-    } else {
-        isDisable.value = false
+    overlappingCompanies.value = [];
+    for (let i = 0; i < companyList.length; i++) {
+        for (let j = i + 1; j < companyList.length; j++) {
+            const startA = new Date(companyList[i].start_date);
+            const endA = new Date(companyList[i].end_date);
+            const startB = new Date(companyList[j].start_date);
+            const endB = new Date(companyList[j].end_date);
+            if (
+                (startA <= endB && endA >= startB) ||
+                (startB <= endA && endB >= startA)
+            ) {
+                overlappingCompanies.value.push(companyList[i].id, companyList[j].id);
+            }
+        }
     }
-    store.commit('setSecondForm', companyList);  // Commit dữ liệu vào store
+
+    isDisable.value = companyList.some(item => !item.company || !item.position || !item.start_date || !item.end_date);
+
+    store.commit('setSecondForm', companyList);
     store.commit('setDisable', isDisable);
 };
 </script>
@@ -192,5 +212,6 @@ p {
 
 p.warning {
     color: red;
+    margin-top: 0px !important;
 }
 </style>
