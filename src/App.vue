@@ -44,25 +44,17 @@ const setCheckedStep = () => {
   console.log(info.value.companyList.isChecked, checkedStep.value);
 }
 
+
+const components = [null, FirstForm, SecondForm, ThirdForm];
+
 const handleStepUpdate = (index) => {
-  setCheckedStep()
-  switch (index) {
-    case 1:
-      component.value = FirstForm;
-      currentStep.value = 1;
-      break;
-    case 2:
-      component.value = SecondForm;
-      currentStep.value = 2;
-      break;
-    case 3:
-      component.value = ThirdForm;
-      currentStep.value = 3;
-      break;
-    default:
-      break;
+  setCheckedStep();
+  if (index >= 1 && index <= components.length - 1) {
+    component.value = components[index];
+    currentStep.value = index;
   }
 };
+
 
 const handleNext = (thisStep) => {
   setCheckedStep()
