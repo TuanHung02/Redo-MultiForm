@@ -3,7 +3,8 @@
         <form id="first-form" method="get" @change="handleChangeSubmit" @submit.prevent>
             <InputText v-model="firstForm.fullName" type="text" name="fullName" label="Họ và tên"
                 placeholder="Nhập tên của bạn" :maxLength="100" :isRequired="true" />
-            <InputText label="Ngày sinh" name="date-picker" type="date" :isRequired="true" v-model="firstForm.date">
+            <InputText label="Ngày sinh" name="date-picker" type="date" :isRequired="true" :isDob="true"
+                v-model="firstForm.date">
             </InputText>
             <SelectOptions :list="listCities" label="Thành Phố" v-model="firstForm.city"></SelectOptions>
             <InputArea label="Mô tả về bản thân" v-model="firstForm.description" :maxLength="1000"></InputArea>
@@ -29,6 +30,7 @@ const firstForm = reactive({
     date: "",
     city: "",
     description: "",
+    isChecked: false,
 });
 
 const isDisable = ref(true);
@@ -43,10 +45,18 @@ watch(
 );
 
 const handleChangeSubmit = () => {
-    isDisable.value = !(firstForm.fullName && firstForm.date);
+    const currentDate = new Date().toISOString().split("T")[0];
+    const isDateValid = firstForm.date && firstForm.date <= currentDate;
 
+    isDisable.value = !(
+        firstForm.fullName?.trim().length > 0 &&
+        firstForm.date?.trim().length > 0 &&
+        isDateValid
+    );
+    firstForm.isChecked = !isDisable.value
     store.commit('setFirstForm', firstForm);
     store.commit('setDisable', isDisable);
+
 };
 
 

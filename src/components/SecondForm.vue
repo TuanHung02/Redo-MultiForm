@@ -1,29 +1,29 @@
 <template>
     <div id="second-form">
         <form id="second-form" method="get" @change="handleChangeSubmit" @submit.prevent>
-            <div class="form-group" v-for="item in companyList" :key="item.id">
+            <div class="form-group" v-for="item in companyList.data" :key="item.id">
                 <div class="select-box">
-                    <InputText v-model="item.company" type="text" name="company" placeholder="Nhập tên của bạn"
-                        :maxLength="100" style="max-width: 780px;" />
+                    <InputText label="Tên công ty" v-model="item.company" type="text" name="company"
+                        placeholder="Nhập tên công ty" :isRequired="true" :maxLength="100"
+                        style="max-width: 780px; height: 110px" />
                     <button @click="handleDelete(item.id)">
                         <TrashIcon />
                     </button>
                 </div>
                 <InputText v-model="item.position" type="text" name="position" label="Vị trí từng làm"
                     placeholder="Nhập vị trí từng làm" :maxLength="100" :isRequired="true" />
-                <div style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; width: 100px;">
+                <div
+                    style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; width: 450px; position: relative ">
                     <InputText label="Ngày bắt đầu" name="date-picker" type="date" v-model="item.start_date"
                         :isRequired="true">
                     </InputText>
                     <InputText label="Ngày kết thúc" name="date-picker" type="date" :isRequired="true"
                         v-model="item.end_date">
                     </InputText>
+                    <p v-if="overlappingCompanies.includes(item.id)" class="warning">
+                        Khoảng thời gian này bị trùng với công ty khác.
+                    </p>
                 </div>
-                <p v-if="overlappingCompanies.includes(item.id)" class="warning">
-                    Khoảng thời gian này bị trùng với công ty khác.
-                </p>
-
-
                 <InputArea label="Mô tả công việc" v-model="item.description" :maxLength="1000"></InputArea>
                 <p style="margin: 3px !important;">
                     {{ item.description.length }}/1000
@@ -45,17 +45,20 @@ import TrashIcon from '@/assets/icons/TrashIcon.vue';
 const store = useStore();
 const isDisable = ref(true);
 store.commit('setDisable', isDisable);
+
 const overlappingCompanies = ref([]);
-const companyList = reactive([
-    {
-        id: 1,
-        company: "",
-        position: "",
-        start_date: "",
-        end_date: "",
-        description: "",
-    },
-]);
+const companyList = reactive({
+    data: [
+        {
+            id: 1,
+            company: "",
+            position: "",
+            start_date: "",
+            end_date: "",
+            description: "",
+        },
+    ], isChecked: false
+});
 
 watch(
     () => store.state.info.companyList,
@@ -67,7 +70,7 @@ watch(
 
 const handleAdd = () => {
     const uniqueKey = Math.random().toString(36).substring(2);
-    companyList.push({
+    companyList.data.push({
         id: uniqueKey,
         company: "",
         position: "",
@@ -82,9 +85,9 @@ const handleAdd = () => {
 
 
 const handleDelete = (id) => {
-    const index = companyList.findIndex(item => item.id === id);
-    if (companyList.length > 1) {
-        companyList.splice(index, 1);
+    const index = companyList.data.findIndex(item => item.id === id);
+    if (companyList.data.length > 1) {
+        companyList.data.splice(index, 1);
         store.commit('setSecondForm', companyList);
     }
 };
@@ -92,25 +95,31 @@ const handleDelete = (id) => {
 
 const handleChangeSubmit = () => {
     overlappingCompanies.value = [];
-    for (let i = 0; i < companyList.length; i++) {
-        for (let j = i + 1; j < companyList.length; j++) {
-            const startA = new Date(companyList[i].start_date);
-            const endA = new Date(companyList[i].end_date);
-            const startB = new Date(companyList[j].start_date);
-            const endB = new Date(companyList[j].end_date);
+    for (let i = 0; i < companyList.data.length; i++) {
+        for (let j = i + 1; j < companyList.data.length; j++) {
+            const startA = new Date(companyList.data[i].start_date);
+            const endA = new Date(companyList.data[i].end_date);
+            const startB = new Date(companyList.data[j].start_date);
+            const endB = new Date(companyList.data[j].end_date);
             if (
                 (startA <= endB && endA >= startB) ||
                 (startB <= endA && endB >= startA)
             ) {
-                overlappingCompanies.value.push(companyList[i].id, companyList[j].id);
+                overlappingCompanies.value.push(companyList.data[i].id, companyList.data[j].id);
             }
         }
     }
-
-    isDisable.value = companyList.some(item => !item.company || !item.position || !item.start_date || !item.end_date);
-
+    isDisable.value = !(overlappingCompanies.value.length > 0);
+    isDisable.value = companyList.data.some(item =>
+        item.company.length === 0 ||
+        item.position.length === 0 ||
+        item.start_date.length === 0 ||
+        item.end_date.length === 0
+    );
+    companyList.isChecked = !isDisable.value
     store.commit('setSecondForm', companyList);
     store.commit('setDisable', isDisable);
+
 };
 </script>
 
@@ -213,5 +222,8 @@ p {
 p.warning {
     color: red;
     margin-top: 0px !important;
+    position: absolute;
+    bottom: 0px;
+    font-size: 12px;
 }
 </style>

@@ -9,20 +9,25 @@ const storeData = {
         date: '',
         city: '',
         description: '',
+        isChecked: false,
       },
-      companyList: [
-        {
-          id: 1,
-          company: '',
-          position: '',
-          start_date: '',
-          end_date: '',
-          description: '',
-        },
-      ],
+      companyList: {
+        data: [
+          {
+            id: 1,
+            company: '',
+            position: '',
+            start_date: '',
+            end_date: '',
+            description: '',
+          },
+        ],
+        isChecked: false,
+      },
       thirdForm: {
         description: '',
         salary: '',
+        isChecked: false,
       },
     },
   },

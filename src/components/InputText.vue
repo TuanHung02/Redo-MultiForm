@@ -8,6 +8,8 @@
                 @blur="validateInput" :class="{ 'warning': error }" />
             <slot></slot>
         </div>
+        <p v-if="isNumber" class="vnd">VNĐ</p>
+
         <p v-if="error" class="error-message">
             {{ error }}
         </p>
@@ -50,6 +52,14 @@ const props = defineProps({
         type: String,
         default: 'text',
     },
+    isDob: {
+        type: Boolean,
+        default: false
+    },
+    isNumber: {
+        type: Boolean,
+        default: false
+    },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -68,19 +78,25 @@ const error = ref('');
 
 
 const validateInput = () => {
-    if (props.isRequired) {
-        if (!localValue.value.trim()) {
-            error.value = 'Trường này không được để trống.';
-        } else if (localValue.value.length > props.maxLength) {
-            error.value = `Độ dài tối đa là ${props.maxLength} ký tự.`;
-        } else {
-            error.value = '';
-        }
+    if (!props.isRequired) {
+        error.value = '';
+        return;
+    }
+
+    if (!localValue.value.trim()) {
+        error.value = 'Trường này không được để trống.';
+    } else if (localValue.value.length > props.maxLength) {
+        error.value = `Độ dài tối đa là ${props.maxLength} ký tự.`;
+    } else if (props.isDob && new Date(localValue.value) >= new Date()) {
+        error.value = 'Ngày sinh không được quá ngày hiện tại.';
+    } else if (props.isNumber && isNaN(localValue.value)) {
+        error.value = 'Vui lòng nhập một số hợp lệ.';
     } else {
-        // Nếu không cần validate, xóa lỗi (nếu có)
         error.value = '';
     }
 };
+
+
 
 </script>
 
@@ -91,6 +107,8 @@ const validateInput = () => {
     width: 506px;
     text-align: start;
     margin-bottom: 10px;
+    position: relative;
+    height: 90px;
 }
 
 .input-item label {
@@ -140,9 +158,17 @@ input::-webkit-inner-spin-button {
     color: red;
     margin: 3px !important;
     font-size: 12px;
+    position: absolute;
+    bottom: 0px;
 }
 
 .warning {
     border-color: red !important;
+}
+
+.vnd {
+    position: absolute;
+    right: -15px;
+    top: 18px;
 }
 </style>

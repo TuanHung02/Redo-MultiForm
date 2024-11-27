@@ -1,10 +1,11 @@
 <template>
   <div id="app">
-    <HeaderStep :currentStep="currentStep" :step="step" />
+    <HeaderStep :currentStep="currentStep" :step="steps" @updateStep="handleStepUpdate" :isChecked="checkedStep" />
     <keep-alive>
       <component :is="component" />
     </keep-alive>
-    <StepButton @handleNext="handleNext" @handleBack="handleBack" :currentStep="currentStep" />
+    <StepButton @handleNext="handleNext(currentStep)" @handleBack="handleBack(currentStep)"
+      :currentStep="currentStep" />
     <div v-if="isDone">{{ info }}</div>
   </div>
 </template>
@@ -21,38 +22,85 @@ import HeaderStep from './components/HeaderStep.vue';
 const store = useStore();
 const info = computed(() => store.state.info);
 const isDone = ref(false)
-const currentStep = ref(2);
-const component = shallowRef(SecondForm);
+const currentStep = ref(1);
+const component = shallowRef(FirstForm);
+const checkedStep = ref(1)
 
-const step = [
+
+const steps = [
   { id: 1, name: "Thông tin cá nhân", class: "first-step" },
   { id: 2, name: "Kinh nghiệm làm việc", class: "second-step" },
   { id: 3, name: "Xác nhận thông tin", class: "third-step" }
 ];
 
-const handleNext = () => {
-  if (component.value === FirstForm) {
-    component.value = SecondForm;
-    currentStep.value = 2;
-  } else if (component.value === SecondForm) {
-    component.value = ThirdForm;
-    currentStep.value = 3;
-  } else if (component.value === ThirdForm) {
-    alert('Send data successfully!')
-    console.log(info.value)
-    isDone.value = true
-  };
+const setCheckedStep = () => {
+  if (info.value.firstForm.isChecked && !info.value.companyList.isChecked) {
+    checkedStep.value = 2
+  } else if (info.value.companyList.isChecked) {
+    checkedStep.value = 3
+  } else {
+    checkedStep.value = 1
+  }
+  console.log(info.value.companyList.isChecked, checkedStep.value);
 }
 
-const handleBack = () => {
-  if (component.value === ThirdForm) {
-    component.value = SecondForm;
-    currentStep.value = 2;
-    store.commit('setDisable', false);
-  } else if (component.value === SecondForm) {
-    component.value = FirstForm;
-    currentStep.value = 1;
-    store.commit('setDisable', false);
+const handleStepUpdate = (index) => {
+  setCheckedStep()
+  switch (index) {
+    case 1:
+      component.value = FirstForm;
+      currentStep.value = 1;
+      break;
+    case 2:
+      component.value = SecondForm;
+      currentStep.value = 2;
+      break;
+    case 3:
+      component.value = ThirdForm;
+      currentStep.value = 3;
+      break;
+    default:
+      break;
   }
 };
+
+const handleNext = (thisStep) => {
+  setCheckedStep()
+  switch (thisStep) {
+    case 1:
+      component.value = SecondForm;
+      currentStep.value = 2;
+      break;
+    case 2:
+      component.value = ThirdForm;
+      currentStep.value = 3;
+      break;
+    case 3:
+      alert('Send data successfully!');
+      console.log(info.value);
+      isDone.value = true;
+      break;
+    default:
+      break;
+  }
+
+}
+
+const handleBack = (thisStep) => {
+  setCheckedStep()
+  switch (thisStep) {
+    case 3:
+      component.value = SecondForm;
+      currentStep.value = 2;
+      store.commit('setDisable', false);
+      break;
+    case 2:
+      component.value = FirstForm;
+      currentStep.value = 1;
+      store.commit('setDisable', false);
+      break;
+    default:
+      break;
+  }
+}
 </script>

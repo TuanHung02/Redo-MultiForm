@@ -94,7 +94,7 @@ const validateInput = () => {
 span {
     font-size: 12px;
     color: #fff;
-    padding: 5px 8px;
+    padding: 2px 8px;
     background-color: #627d98;
     line-height: 20px;
     border-radius: 3px;

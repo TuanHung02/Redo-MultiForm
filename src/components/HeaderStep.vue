@@ -2,9 +2,8 @@
     <div id="header-form">
         <h3>Đơn ứng tuyển</h3>
         <div class="step">
-            <div v-for="(item, index) in step" :key="index" :class="{ active: currentStep === index + 1 }"
-                class="step-item">
-                <span v-if="currentStep >= index + 1" class="step-idx step-check">
+            <div v-for="(item, index) in step" :key="index" class="step-item">
+                <span v-if="isChecked >= index + 1" class="step-idx step-check" @click="handleClick(index + 1)">
                     {{ item.id }}
                 </span>
                 <span v-else class="step-idx">
@@ -17,10 +16,18 @@
 </template>
 
 <script setup>
+import { defineProps, defineEmits } from 'vue';
+
 defineProps({
     currentStep: Number,
     step: Array,
+    isChecked: Number
 });
+const emit = defineEmits(['updateStep']);
+
+const handleClick = (index) => {
+    emit('updateStep', index);
+};
 
 
 </script>

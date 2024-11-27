@@ -6,8 +6,9 @@
             <p style="margin: 3px !important;">
                 {{ thirdForm.reason.length }}/1000
             </p>
-            <InputText v-model="thirdForm.salary" type="number" name="salary" label="Mức lương mong muốn"
-                placeholder="Nhập tên của bạn" :maxLength="100" :isRequired="true" />
+            <InputText v-model="thirdForm.salary" type="text" name="salary" label="Mức lương mong muốn"
+                placeholder="Nhập số tiền mong muốn" :maxLength="10" :isRequired="true" :isNumber="true"
+                style="width: 230px" />
         </form>
     </div>
 </template>
@@ -25,6 +26,7 @@ store.commit('setDisable', isDisable);
 const thirdForm = reactive({
     reason: "",
     salary: "",
+    isChecked: false
 });
 
 watch(
@@ -36,11 +38,11 @@ watch(
 );
 
 const handleChangeSubmit = () => {
-    isDisable.value = !(thirdForm.reason && thirdForm.salary);
+    isDisable.value = !(thirdForm.reason?.length > 0 && thirdForm.salary?.length > 0);
 
+    thirdForm.isChecked = !isDisable.value
     store.commit('setThirdForm', thirdForm);
     store.commit('setDisable', isDisable);
-
 };
 
 </script>

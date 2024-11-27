@@ -1,12 +1,12 @@
 <template>
     <div class="button-control">
-        <button v-show="currentStep > 1 && currentStep < 4" @click="handleBack">
+        <button v-show="currentStep > 1 && currentStep < 4" @click="handleBack(currentStep)">
             Quay lại
         </button>
-        <button v-show="currentStep < 3" @click="handleNext" form="first-form" :disabled="isDisable">
+        <button v-show="currentStep < 3" @click="handleNext(currentStep)" form="first-form" :disabled="isDisable">
             Tiếp
         </button>
-        <button v-show="currentStep == 3" @click="handleNext" type="submit" :disabled="isDisable">
+        <button v-show="currentStep == 3" @click="handleNext(currentStep)" type="submit" :disabled="isDisable">
             Hoàn Thành
         </button>
     </div>
@@ -25,12 +25,12 @@ const emit = defineEmits(['handleBack', 'handleNext']);
 const store = useStore();
 
 const isDisable = computed(() => store.getters.isDisable);
-const handleBack = () => {
-    emit('handleBack');
+const handleBack = (step) => {
+    emit('handleBack', step);
 };
 
-const handleNext = () => {
-    emit('handleNext');
+const handleNext = (step) => {
+    emit('handleNext', step);
 };
 </script>
 
