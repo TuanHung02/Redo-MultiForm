@@ -18,7 +18,7 @@ import SecondForm from './components/SecondForm.vue';
 import StepButton from './components/StepButton.vue';
 import { useStore } from 'vuex';
 import HeaderStep from './components/HeaderStep.vue';
-//newcmtdd
+//newcmtddstest
 const store = useStore();
 const info = computed(() => store.state.info);
 const isDone = ref(false)
