@@ -80,9 +80,7 @@ const handleAdd = () => {
     });
     store.commit('setSecondForm', companyList);
     store.commit('setDisable', true);
-
 };
-
 
 const handleDelete = (id) => {
     const index = companyList.data.findIndex(item => item.id === id);
@@ -92,19 +90,15 @@ const handleDelete = (id) => {
     }
 };
 
-
 const handleChangeSubmit = () => {
     overlappingCompanies.value = [];
     let invalidDates = [];
-
     for (let i = 0; i < companyList.data.length; i++) {
         const startA = new Date(companyList.data[i].start_date);
         const endA = new Date(companyList.data[i].end_date);
-
         if (startA >= endA) {
             invalidDates.push(companyList.data[i].id);
         }
-
         for (let j = i + 1; j < companyList.data.length; j++) {
             const startB = new Date(companyList.data[j].start_date);
             const endB = new Date(companyList.data[j].end_date);
@@ -116,16 +110,13 @@ const handleChangeSubmit = () => {
             }
         }
     }
-
     isDisable.value = overlappingCompanies.value.length > 0 || invalidDates.length > 0 || companyList.data.some(item =>
         item.company.length === 0 ||
         item.position.length === 0 ||
         item.start_date.length === 0 ||
         item.end_date.length === 0
     );
-
     overlappingCompanies.value = [...overlappingCompanies.value, ...invalidDates];
-
     companyList.isChecked = !isDisable.value;
     store.commit('setSecondForm', companyList);
     store.commit('setDisable', isDisable);

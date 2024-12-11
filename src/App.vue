@@ -26,7 +26,6 @@ const currentStep = ref(1);
 const component = shallowRef(FirstForm);
 const checkedStep = ref(1)
 
-
 const steps = [
   { id: 1, name: "Thông tin cá nhân", class: "first-step" },
   { id: 2, name: "Kinh nghiệm làm việc", class: "second-step" },
@@ -44,7 +43,6 @@ const setCheckedStep = () => {
   console.log(info.value.companyList.isChecked, checkedStep.value);
 }
 
-
 const components = [null, FirstForm, SecondForm, ThirdForm];
 
 const handleStepUpdate = (index) => {
@@ -55,32 +53,21 @@ const handleStepUpdate = (index) => {
   }
 };
 
-
-const handleNext = (thisStep) => {
-  setCheckedStep()
-  switch (thisStep) {
-    case 1:
-      component.value = SecondForm;
-      currentStep.value = 2;
-      break;
-    case 2:
-      component.value = ThirdForm;
-      currentStep.value = 3;
-      break;
-    case 3:
-      alert('Send data successfully!');
-      console.log(info.value);
-      isDone.value = true;
-      break;
-    default:
-      break;
+const handleNext = (prevStep) => {
+  setCheckedStep();
+  if (prevStep >= 1 && prevStep < components.length - 1) {
+    component.value = components[prevStep + 1];
+    currentStep.value = prevStep + 1;
+  } else if (prevStep === components.length - 1) {
+    alert('Send data successfully!');
+    console.log(info.value);
+    isDone.value = true;
   }
+};
 
-}
-
-const handleBack = (thisStep) => {
+const handleBack = (prevStep) => {
   setCheckedStep()
-  switch (thisStep) {
+  switch (prevStep) {
     case 3:
       component.value = SecondForm;
       currentStep.value = 2;
